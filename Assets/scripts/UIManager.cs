@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Handlers;
 using UnityEngine;
 using TMPro;
 
@@ -36,9 +37,9 @@ public class UIManager : MonoBehaviour
         var rb = drone.GetComponent<Rigidbody>();
         rb.isKinematic = true;
         drone.transform.SetPositionAndRotation(resetPosition, Quaternion.Euler(0, 0, 0));
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        // 4. Ждем чтобы моторы "остановились"
+        // 4. пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
         yield return new WaitForSeconds(0.2f);
         rb.isKinematic = false;
     }

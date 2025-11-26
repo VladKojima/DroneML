@@ -1,3 +1,4 @@
+using Handlers;
 using UnityEngine;
 
 public class DroneDebugMonitor : MonoBehaviour
@@ -28,7 +29,7 @@ public class DroneDebugMonitor : MonoBehaviour
     private GUIStyle toggleStyle;
     private Vector2 scrollPosition = Vector2.zero;
 
-    // Данные для мониторинга
+    // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private float currentPitch, currentRoll, currentYaw;
     private Vector3 angularVelocity;
     private Vector3 velocity;
@@ -40,7 +41,7 @@ public class DroneDebugMonitor : MonoBehaviour
         droneSensors = GetComponent<DroneSensors>();
         udpStreamer = GetComponent<UdpStreamer>();
 
-        // Настройка стиля GUI
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ GUI
         labelStyle = new GUIStyle();
         labelStyle.fontSize = 22;
         labelStyle.normal.textColor = Color.white;
@@ -51,10 +52,10 @@ public class DroneDebugMonitor : MonoBehaviour
     {
         if (rb == null) return;
 
-        // Обновляем данные мониторинга
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         UpdateMonitoringData();
 
-        // Логирование в консоль
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (logToConsole && Time.time % 1f < Time.deltaTime)
         {
             LogDebugInfo();
@@ -71,9 +72,9 @@ public class DroneDebugMonitor : MonoBehaviour
         currentYaw = NormalizeAngle(eulerAngles.y);
 
         angularVelocity = rb.angularVelocity;
-        velocity = rb.velocity;
+        velocity = rb.linearVelocity;
 
-        // Получаем силы моторов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (flightController != null)
         {
             if (flightController.frontLeftMotor) motorThrusts[0] = flightController.frontLeftMotor.GetCurrentThrust();
@@ -85,7 +86,7 @@ public class DroneDebugMonitor : MonoBehaviour
 
     void LogDebugInfo()
     {
-        Debug.Log($"Drone Debug - Pitch: {currentPitch:F1}°, Roll: {currentRoll:F1}°, Yaw: {currentYaw:F1}°");
+        Debug.Log($"Drone Debug - Pitch: {currentPitch:F1}пїЅ, Roll: {currentRoll:F1}пїЅ, Yaw: {currentYaw:F1}пїЅ");
         Debug.Log($"Angular Velocity - X: {angularVelocity.x:F2}, Y: {angularVelocity.y:F2}, Z: {angularVelocity.z:F2}");
         Debug.Log($"Motor Thrusts - FL: {motorThrusts[0]:F1}, FR: {motorThrusts[1]:F1}, RL: {motorThrusts[2]:F1}, RR: {motorThrusts[3]:F1}");
     }
@@ -103,29 +104,29 @@ public class DroneDebugMonitor : MonoBehaviour
         toggleStyle.fixedHeight = 30;
 
 
-        // Основная область с фиксированным размером
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Rect mainRect = new Rect(Screen.width - guiWidth - 10, 10, guiWidth, guiHeight);
 
         GUILayout.BeginArea(mainRect);
         GUILayout.BeginVertical("box");
 
-        // Заголовок (всегда виден)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
         GUILayout.Label("=== DRONE DEBUG MONITOR ===", labelStyle);
         GUILayout.Space(5);
 
-        // Область с прокруткой для основного контента
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         scrollPosition = GUILayout.BeginScrollView(scrollPosition,
             GUILayout.Width(guiWidth - 30),
-            GUILayout.Height(guiHeight - 250)); // Оставляем место для заголовка и отступов
+            GUILayout.Height(guiHeight - 250)); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-        // Углы и скорости
+        // пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         GUILayout.Label("ORIENTATION:", GetBoldStyle());
-        GUILayout.Label($"Pitch: {currentPitch:F1}°", GetColoredStyle(Mathf.Abs(currentPitch) > 20f));
-        GUILayout.Label($"Roll: {currentRoll:F1}°", GetColoredStyle(Mathf.Abs(currentRoll) > 20f));
-        GUILayout.Label($"Yaw: {currentYaw:F1}°", labelStyle);
+        GUILayout.Label($"Pitch: {currentPitch:F1}пїЅ", GetColoredStyle(Mathf.Abs(currentPitch) > 20f));
+        GUILayout.Label($"Roll: {currentRoll:F1}пїЅ", GetColoredStyle(Mathf.Abs(currentRoll) > 20f));
+        GUILayout.Label($"Yaw: {currentYaw:F1}пїЅ", labelStyle);
         GUILayout.Space(5);
 
-        // Состояние системы
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (flightController != null)
         {
             GUILayout.Label("FLIGHT CONTROLLER:", GetBoldStyle());
@@ -134,7 +135,7 @@ public class DroneDebugMonitor : MonoBehaviour
             GUILayout.Space(5);
         }
 
-        // Силы моторов
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (showMotorForces)
         {
             GUILayout.Label("MOTOR FORCES:", GetBoldStyle());
@@ -143,7 +144,7 @@ public class DroneDebugMonitor : MonoBehaviour
             GUILayout.Label($"Rear Left:   {motorThrusts[2]:F1}N", labelStyle);
             GUILayout.Label($"Rear Right:  {motorThrusts[3]:F1}N", labelStyle);
 
-            // Показываем разность тяг (для диагностики калибровки)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             float avgThrust = (motorThrusts[0] + motorThrusts[1] + motorThrusts[2] + motorThrusts[3]) / 4f;
             GUILayout.Label($"Average: {avgThrust:F1}N", labelStyle);
 
@@ -155,7 +156,7 @@ public class DroneDebugMonitor : MonoBehaviour
             }
             GUILayout.Label($"Max Diff: {maxDiff:F1}N", GetColoredStyle(maxDiff > 5f));
 
-            // Показываем различия для каждого мотора
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             for (int i = 0; i < 4; i++)
             {
                 float diff = motorThrusts[i] - avgThrust;
@@ -165,7 +166,7 @@ public class DroneDebugMonitor : MonoBehaviour
             GUILayout.Space(5);
         }
 
-        // Входные данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (inputManager != null)
         {
             GUILayout.Label("INPUT:", GetBoldStyle());
@@ -178,23 +179,23 @@ public class DroneDebugMonitor : MonoBehaviour
             GUILayout.Space(5);
         }
 
-        // Дополнительная информация о физике
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         GUILayout.Label("PHYSICS:", GetBoldStyle());
         GUILayout.Label($"Mass: {rb.mass:F1}kg", labelStyle);
-        GUILayout.Label($"Drag: {rb.drag:F2}", labelStyle);
-        GUILayout.Label($"Angular Drag: {rb.angularDrag:F2}", labelStyle);
+        GUILayout.Label($"Drag: {rb.linearDamping:F2}", labelStyle);
+        GUILayout.Label($"Angular Drag: {rb.angularDamping:F2}", labelStyle);
         Vector3 com = rb.centerOfMass;
         GUILayout.Label($"Center of Mass: ({com.x:F2}, {com.y:F2}, {com.z:F2})", labelStyle);
         GUILayout.Space(5);
 
-        // === ДАННЫЕ СЕНСОРОВ ===
+        // === пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
         if (droneSensors != null && showSensors)
         {
             GUILayout.Label("SENSORS:", GetBoldStyle());
             GUILayout.Label($"Absolute Altitude: {droneSensors.AbsoluteAltitude:F2}m", labelStyle);
             GUILayout.Label($"Ground Distance: {droneSensors.GroundDistance:F2}m",
                 GetColoredStyle(droneSensors.GroundDistance < 5f));
-            GUILayout.Label($"Attitude: ({droneSensors.Attitude.x:F1}°, {droneSensors.Attitude.y:F1}°, {droneSensors.Attitude.z:F1}°)", labelStyle);
+            GUILayout.Label($"Attitude: ({droneSensors.Attitude.x:F1}пїЅ, {droneSensors.Attitude.y:F1}пїЅ, {droneSensors.Attitude.z:F1}пїЅ)", labelStyle);
             GUILayout.Label($"Angular Velocity: ({droneSensors.AngularVelocity.x:F1}, {droneSensors.AngularVelocity.y:F1}, {droneSensors.AngularVelocity.z:F1}) rad/s", labelStyle);
             GUILayout.Label($"Forward Speed: {droneSensors.ForwardSpeed:F1} m/s", labelStyle);
             GUILayout.Label($"Right Speed: {droneSensors.RightSpeed:F1} m/s", labelStyle);
@@ -204,54 +205,54 @@ public class DroneDebugMonitor : MonoBehaviour
             GUILayout.Space(5);
         }
 
-        // === НАСТРОЙКИ UDP СТРИМЕРА ===
+        // === пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UDP пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
         if (showUDPSettings)
         {
             GUILayout.Label("UDP STREAM SETTINGS:", GetBoldStyle());
 
-            // Разрешение
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Resolution:", labelStyle);
             GUILayout.BeginHorizontal();
             int newWidth = (int)GUILayout.HorizontalSlider(udpStreamer.width, 64, 1920);
             GUILayout.Label($"{udpStreamer.width}x{udpStreamer.height}", labelStyle);
             GUILayout.EndHorizontal();
 
-            // Качество
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Quality:", labelStyle);
             int newQuality = (int)GUILayout.HorizontalSlider(udpStreamer.quality, 1, 100);
 
-            // IP адрес
+            // IP пїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Video IP:", labelStyle);
             string newVideoIp = GUILayout.TextField(udpStreamer.videoIp, textFieldStyle);
 
-            // Порт видео
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Video Port:", labelStyle);
             int newVideoPort = int.Parse(GUILayout.TextField(udpStreamer.videoPort.ToString(), textFieldStyle));
 
-            // Порт сенсоров
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Sensors Port:", labelStyle);
             int newSensorsPort = int.Parse(GUILayout.TextField(udpStreamer.sensorsPort.ToString(), textFieldStyle));
 
-            // Частота обновления сенсоров
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             GUILayout.Label("Sensors Rate (Hz):", labelStyle);
             float newSensorsUpdateRate = GUILayout.HorizontalSlider(udpStreamer.sensorsUpdateRate, 1, 60);
             GUILayout.Label($"{udpStreamer.sensorsUpdateRate:F1} Hz", labelStyle);
 
-            // сохранение настроек для стримера
-            // (int)(newWidth * 0.75f); Сохраняем соотношение 4:3
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            // (int)(newWidth * 0.75f); пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4:3
             udpStreamer.UpdateSettings(newWidth, (int)(newWidth * 0.75f), newQuality, newVideoIp,
                                   newVideoPort, newSensorsPort, newSensorsUpdateRate);
 
             GUILayout.Space(10);
         }
 
-        { // ==== НАСТРОЙКИ ГРАФИКИ ====
+        { // ==== пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ====
             GUILayout.Label("GRAPHICS PRESET:", GetBoldStyle());
 
             string[] presetNames = new string[] { "Very Low", "Low", "Medium", "High", "Very High", "Ultra" };
             int maxAvailable = QualitySettings.names.Length - 1;
 
-            // Показываем только доступные пресеты
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             string[] availablePresets = new string[maxAvailable + 1];
             for (int i = 0; i <= maxAvailable; i++)
             {
@@ -272,7 +273,7 @@ public class DroneDebugMonitor : MonoBehaviour
         GUILayout.EndScrollView();
         GUILayout.Space(10);
 
-        // ====  КНОПКИ УПРАВЛЕНИЯ  ====
+        // ====  пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ  ====
         GUILayout.Label("CONTROLS:", GetBoldStyle());
 
         if (GUILayout.Button("Toggle Stabilization", GUILayout.Height(25)) && flightController != null)
@@ -286,14 +287,14 @@ public class DroneDebugMonitor : MonoBehaviour
         }
         else showAngles = false;
 
-        // === ГАЛОЧКА ДЛЯ СЕНСОРОВ ===
+        // === пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
         if (GUILayout.Toggle(showSensors, "Show Sensors", toggleStyle))
         {
             showSensors = true;
         }
         else showSensors = false; 
 
-        // === ГАЛОЧКА ДЛЯ UDP ===
+        // === пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ UDP ===
         if (GUILayout.Toggle(showUDPSettings, "Show UDP Settings", toggleStyle))
         {
             showUDPSettings = true;
@@ -305,7 +306,7 @@ public class DroneDebugMonitor : MonoBehaviour
         GUILayout.EndVertical();
         GUILayout.EndArea();
 
-        // Показываем подсказку о прокрутке в правом нижнем углу
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         GUIStyle hintStyle = new GUIStyle(labelStyle);
         hintStyle.fontSize = 10;
         hintStyle.normal.textColor = Color.gray;
@@ -336,24 +337,24 @@ public class DroneDebugMonitor : MonoBehaviour
     }
 
     void OnDrawGizmos()
-    {// всегда выключен
+    {// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (true) return;
 
-        // Отображаем ориентацию дрона
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.forward * 2f); // Направление "вперед"
+        Gizmos.DrawRay(transform.position, transform.forward * 2f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅ"
 
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position, transform.up * 2f); // Направление "вверх"
+        Gizmos.DrawRay(transform.position, transform.up * 2f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅ"
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, transform.right * 2f); // Направление "вправо"
+        Gizmos.DrawRay(transform.position, transform.right * 2f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅ"
 
-        // Показываем целевое направление (горизонталь)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Gizmos.color = Color.yellow;
         Gizmos.DrawRay(transform.position, Vector3.up * 3f);
 
-        // Показываем центр масс
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         if (GetComponent<Rigidbody>() != null)
         {
             Gizmos.color = Color.magenta;
@@ -361,7 +362,7 @@ public class DroneDebugMonitor : MonoBehaviour
             Gizmos.DrawWireSphere(centerOfMass, 0.2f);
         }
 
-        // Рейкаст дальномер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Gizmos.color = Color.green;
         Vector3 rayOrigin = transform.position + transform.TransformDirection(droneSensors.raycastOffset);
         Vector3 rayDirection = -transform.up;
@@ -369,7 +370,7 @@ public class DroneDebugMonitor : MonoBehaviour
         Gizmos.DrawLine(rayOrigin, rayOrigin + rayDirection * droneSensors.GroundDistance);
         Gizmos.DrawSphere(rayOrigin + rayDirection * droneSensors.GroundDistance, 0.1f);
 
-        // Дополнительно рисуем максимальную дальность
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Gizmos.color = Color.red;
         Gizmos.DrawLine(rayOrigin, rayOrigin + rayDirection * droneSensors.raycastDistance);
     }
@@ -378,19 +379,19 @@ public class DroneDebugMonitor : MonoBehaviour
     {
         if (!showAngles) return;
 
-        // Направление "вперед" (красный)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅ" (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Debug.DrawRay(transform.position, transform.forward * 2f, Color.red);
 
-        // Направление "вверх" (зеленый)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅ" (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Debug.DrawRay(transform.position, transform.up * 2f, Color.green);
 
-        // Направление "вправо" (синий)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅ" (пїЅпїЅпїЅпїЅпїЅ)
         Debug.DrawRay(transform.position, transform.right * 2f, Color.blue);
 
-        // Целевое направление (желтый, вертикаль)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Debug.DrawRay(transform.position, Vector3.up * 3f, Color.yellow);
 
-        // Центр масс (магентовый — линиями крестик вместо сферы)
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
         if (TryGetComponent(out Rigidbody rb))
         {
             Vector3 com = transform.TransformPoint(rb.centerOfMass);
@@ -400,33 +401,33 @@ public class DroneDebugMonitor : MonoBehaviour
             Debug.DrawLine(com - Vector3.forward * s, com + Vector3.forward * s, Color.magenta);
         }
 
-        // Рейкаст дальномер (зеленый)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Vector3 rayOrigin = transform.position + transform.TransformDirection(droneSensors.raycastOffset);
         Vector3 rayDirection = -transform.up;
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * droneSensors.GroundDistance, Color.green);
 
-        // Кончик луча — маленький крестик
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Vector3 hitPoint = rayOrigin + rayDirection * droneSensors.GroundDistance;
         float size = 0.05f;
         Debug.DrawLine(hitPoint - Vector3.right * size, hitPoint + Vector3.right * size, Color.green);
         Debug.DrawLine(hitPoint - Vector3.forward * size, hitPoint + Vector3.forward * size, Color.green);
 
-        // Максимальная дальность (красный)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * droneSensors.raycastDistance, Color.red);
     }
 
 
     /// <summary>
-    /// Принудительная стабилизация для экстренных случаев
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public void EmergencyStabilize()
     {
         if (rb != null)
         {
-            // Гасим угловую скорость
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 10f);
 
-            // Выравниваем дрон
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             Vector3 targetUp = Vector3.up;
             Vector3 currentUp = transform.up;
             Vector3 correctionTorque = Vector3.Cross(currentUp, targetUp) * 100f;
@@ -435,11 +436,11 @@ public class DroneDebugMonitor : MonoBehaviour
     }
 
     /// <summary>
-    /// Получает диагностическую информацию
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public string GetDiagnostics()
     {
-        return $"Pitch: {currentPitch:F1}°, Roll: {currentRoll:F1}°, " +
+        return $"Pitch: {currentPitch:F1}пїЅ, Roll: {currentRoll:F1}пїЅ, " +
                $"AngVel: {angularVelocity.magnitude:F2}, " +
                $"Motors: FL={motorThrusts[0]:F1}, FR={motorThrusts[1]:F1}, " +
                $"RL={motorThrusts[2]:F1}, RR={motorThrusts[3]:F1}";

@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class DroneSensors : MonoBehaviour
 {
-    [Header("Настройки датчиков")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     public bool useGroundRaycast = true;
-    public LayerMask groundLayerMask = 1; // Слой по умолчанию
+    public LayerMask groundLayerMask = 1; // пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public float raycastDistance = 100f;
     public Vector3 raycastOffset = Vector3.zero;
 
-    [Header("Показания датчиков (только чтение)")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)")]
     [SerializeField] private float _absoluteAltitude;
     [SerializeField] private float _pitch;
     [SerializeField] private float _roll;
     [SerializeField] private float _yaw;
     [SerializeField] private float _groundDistance;
-    [SerializeField] private Vector3 _attitude; // Крен, тангаж, рыскание
+    [SerializeField] private Vector3 _attitude; // пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     [SerializeField] private Vector3 _localVelocity;
     [SerializeField] private Vector3 _worldVelocity;
     [SerializeField] private Vector3 _angularVelocity;
@@ -25,7 +25,7 @@ public class DroneSensors : MonoBehaviour
 
     private Rigidbody _rb;
 
-    // Публичные свойства для доступа к данным датчиков
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public float AbsoluteAltitude => _absoluteAltitude;
     public float Pitch => _pitch;
     public float Roll => _roll;
@@ -45,7 +45,7 @@ public class DroneSensors : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         if (_rb == null)
         {
-            Debug.LogWarning("Rigidbody не найден на дроне. Некоторые датчики могут работать некорректно.");
+            Debug.LogWarning("Rigidbody пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
         }
     }
 
@@ -56,26 +56,26 @@ public class DroneSensors : MonoBehaviour
 
     private void UpdateSensors()
     {
-        // Абсолютная высота (координата Y в мировых координатах)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Y пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         _absoluteAltitude = transform.position.y;
 
-        // Углы наклона (в градусах)
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         _pitch = transform.eulerAngles.x;
         _roll = transform.eulerAngles.z;
         _yaw = transform.eulerAngles.y;
 
-        // Нормализация углов в диапазон -180 до 180 градусов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ -180 пїЅпїЅ 180 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         _pitch = NormalizeAngle(_pitch);
         _roll = NormalizeAngle(_roll);
         _yaw = NormalizeAngle(_yaw);
 
-        // Вектор attitude (крен, тангаж, рыскание)
+        // пїЅпїЅпїЅпїЅпїЅпїЅ attitude (пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         _attitude = new Vector3(_roll, _pitch, _yaw);
 
-        // Скорость и угловая скорость
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         UpdateVelocityData();
 
-        // Дальномер до земли
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         UpdateGroundDistance();
     }
 
@@ -83,21 +83,21 @@ public class DroneSensors : MonoBehaviour
     {
         if (_rb != null)
         {
-            // Мировая скорость
-            _worldVelocity = _rb.velocity;
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            _worldVelocity = _rb.linearVelocity;
 
-            // Локальная скорость (относительно дрона)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
             _localVelocity = transform.InverseTransformDirection(_worldVelocity);
 
-            // Угловая скорость
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             _angularVelocity = _rb.angularVelocity;
 
-            // Компоненты скорости в локальных координатах
-            _forwardSpeed = _localVelocity.z;  // Вперед/назад
-            _rightSpeed = _localVelocity.x;    // Вправо/влево
-            _verticalSpeed = _localVelocity.y; // Вверх/вниз
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            _forwardSpeed = _localVelocity.z;  // пїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅ
+            _rightSpeed = _localVelocity.x;    // пїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅ
+            _verticalSpeed = _localVelocity.y; // пїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅ
 
-            // Общая скорость (только горизонтальная составляющая)
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             _totalSpeed = new Vector3(_localVelocity.x, 0, _localVelocity.z).magnitude;
         }
         else
@@ -119,7 +119,7 @@ public class DroneSensors : MonoBehaviour
             RaycastHit hit;
             Vector3 rayOrigin = transform.position + transform.TransformDirection(raycastOffset);
 
-            // Направление луча - вниз относительно дрона
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             Vector3 rayDirection = -transform.up;
 
             if (Physics.Raycast(rayOrigin, rayDirection, out hit, raycastDistance, groundLayerMask))
@@ -128,19 +128,19 @@ public class DroneSensors : MonoBehaviour
             }
             else
             {
-                _groundDistance = raycastDistance; // Максимальная дальность
+                _groundDistance = raycastDistance; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             }
         }
         else
         {
-            // Альтернативный метод - просто используем высоту
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             _groundDistance = _absoluteAltitude;
         }
     }
 
     private float NormalizeAngle(float angle)
     {
-        // Приводим угол к диапазону -180 до 180 градусов
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ -180 пїЅпїЅ 180 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         angle = angle % 360;
         if (angle > 180)
             angle -= 360;
@@ -150,7 +150,7 @@ public class DroneSensors : MonoBehaviour
         return angle;
     }
 
-    // Метод для получения нормализованного вектора направления к земле
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
     public Vector3 GetGroundNormal()
     {
         if (useGroundRaycast)
@@ -165,16 +165,16 @@ public class DroneSensors : MonoBehaviour
             }
         }
 
-        return Vector3.up; // Возвращаем вектор вверх по умолчанию
+        return Vector3.up; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
 
-    // Метод для проверки, находится ли дрон над землей
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     public bool IsGrounded(float threshold = 0.1f)
     {
         return _groundDistance <= threshold;
     }
 
-    // Метод для получения скорости в указанном локальном направлении
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public float GetSpeedInDirection(Vector3 localDirection)
     {
         return Vector3.Dot(_localVelocity, localDirection.normalized);

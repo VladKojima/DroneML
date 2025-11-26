@@ -1,26 +1,32 @@
+using System;
 using UnityEngine;
 
-public class TerrainTreeToggle : MonoBehaviour
+namespace TerrainDemoScene_URP.Scripts
 {
-    private void OnEnable()
+    public class TerrainTreeToggle : MonoBehaviour
     {
-        var terrains = Object.FindObjectsOfType<Terrain>();
-        foreach (Terrain terrain in terrains)
+        [Obsolete("Obsolete")]
+        private void OnEnable()
         {
-            terrain.drawTreesAndFoliage = false;
+            var terrains = FindObjectsOfType<Terrain>();
+            foreach (var terrain in terrains)
+            {
+                terrain.drawTreesAndFoliage = false;
+            }
+
+            RenderSettings.fogDensity = (float)0.0001;
         }
 
-        RenderSettings.fogDensity = (float)0.0001;
-    }
-
-    private void OnDisable()
-    {
-        var terrains = Object.FindObjectsOfType<Terrain>();
-        foreach (Terrain terrain in terrains)
+        [Obsolete("Obsolete")]
+        private void OnDisable()
         {
-            terrain.drawTreesAndFoliage = true;
-        }
+            var terrains = FindObjectsOfType<Terrain>();
+            foreach (var terrain in terrains)
+            {
+                terrain.drawTreesAndFoliage = true;
+            }
 
-        RenderSettings.fogDensity = (float)0.0005;
+            RenderSettings.fogDensity = (float)0.0005;
+        }
     }
 }

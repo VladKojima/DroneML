@@ -3,296 +3,275 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DroneInputManager : MonoBehaviour
+namespace Handlers
 {
-    [Header("Flight Controller")]
-    public FlightController flightController;
-
-    [Header("Java Input")]
-    public JavaInputReceiver javaInputReceiver;
-
-    [Header("Input Settings")]
-    public InputMode currentInputMode = InputMode.Keyboard;
-    public bool invertPitch = false;
-    public bool invertRoll = false;
-    public bool invertYaw = false;
-
-    [Header("Keyboard Controls")]
-    public KeyCode thrustUpKey = KeyCode.Space;
-    public KeyCode thrustDownKey = KeyCode.LeftShift;
-    public KeyCode pitchForwardKey = KeyCode.W;
-    public KeyCode pitchBackwardKey = KeyCode.S;
-    public KeyCode rollLeftKey = KeyCode.A;
-    public KeyCode rollRightKey = KeyCode.D;
-    public KeyCode yawLeftKey = KeyCode.Q;
-    public KeyCode yawRightKey = KeyCode.E;
-    public KeyCode calibrateKey = KeyCode.C;
-    public KeyCode toggleStabilizationKey = KeyCode.T;
-
-    [Header("Gamepad Controls")]
-    public bool useGamepad = false;
-    public string thrustAxis = "Vertical"; // Левый стик Y или триггеры
-    public string pitchAxis = "Vertical2"; // Правый стик Y
-    public string rollAxis = "Horizontal2"; // Правый стик X
-    public string yawAxis = "Horizontal"; // Левый стик X или плечевые кнопки
-
-    [Header("Virtual Joystick")]
-    public VirtualJoystick leftJoystick; // Для тяги и рыскания
-    public VirtualJoystick rightJoystick; // Для тангажа и крена
-
-    [Header("Neurointerface")]
-    public DroneAgent agent;
-
-
-    [Header("Sensitivity")]
-    [Range(0.1f, 3f)]
-    public float inputSensitivity = 1f;
-
-    // Текущие входные значения
-    private float thrust = 0f;
-    private float pitch = 0f;
-    private float roll = 0f;
-    private float yaw = 0f;
-
-    // Сглаживание ввода
-    [Header("Input Smoothing")]
-    public float inputSmoothing = 0.1f;
-    private float smoothThrust, smoothPitch, smoothRoll, smoothYaw;
-
-    public enum InputMode
+    public class DroneInputManager : MonoBehaviour
     {
-        Keyboard,
-        Gamepad,
-        VirtualJoystick,
-        Java,
-        Neurointerface,
-    }
+        [Header("Flight Controller")]
+        public FlightController flightController;
 
-    public List<string> GetInputModes()
-    {
-        var modes = Enum.GetNames(typeof(InputMode)).ToList();
-        return modes;
-    }
+        [Header("Java Input")]
+        public JavaInputReceiver javaInputReceiver;
 
-    public void SetInputMode(int value)
-    {
-        currentInputMode = (InputMode)value;
-    }
+        [Header("Input Settings")]
+        public InputMode currentInputMode = InputMode.Keyboard;
+        public bool invertPitch = false;
+        public bool invertRoll = false;
+        public bool invertYaw = false;
+
+        [Header("Keyboard Controls")]
+        public KeyCode thrustUpKey = KeyCode.Space;
+        public KeyCode thrustDownKey = KeyCode.LeftShift;
+        public KeyCode pitchForwardKey = KeyCode.W;
+        public KeyCode pitchBackwardKey = KeyCode.S;
+        public KeyCode rollLeftKey = KeyCode.A;
+        public KeyCode rollRightKey = KeyCode.D;
+        public KeyCode yawLeftKey = KeyCode.Q;
+        public KeyCode yawRightKey = KeyCode.E;
+        public KeyCode calibrateKey = KeyCode.C;
+        public KeyCode toggleStabilizationKey = KeyCode.T;
+
+        [Header("Gamepad Controls")]
+        public bool useGamepad = false;
+        public string thrustAxis = "Vertical";
+        public string pitchAxis = "Vertical2";
+        public string rollAxis = "Horizontal2";
+        public string yawAxis = "Horizontal";
+
+        [Header("Virtual Joystick")]
+        public VirtualJoystick leftJoystick;
+        public VirtualJoystick rightJoystick;
+
+        [Header("Neurointerface")]
+        public DroneAgent agent;
 
 
-    void Start()
-    {
-        if (flightController == null)
-            flightController = GetComponent<FlightController>();
+        [Header("Sensitivity")]
+        [Range(0.1f, 3f)]
+        public float inputSensitivity = 1f;
 
-        if (flightController == null)
+        private float _thrust = 0f;
+        private float _pitch = 0f;
+        private float _roll = 0f;
+        private float _yaw = 0f;
+
+        [Header("Input Smoothing")]
+        public float inputSmoothing = 0.1f;
+        private float _smoothThrust, _smoothPitch, _smoothRoll, _smoothYaw;
+
+        public enum InputMode
         {
-            Debug.LogError("DroneInputManager: FlightController не найден!");
-        }
-    }
-
-    void Update()
-    {
-        // Обработка переключения режимов
-        HandleModeToggle();
-
-        // Получение ввода в зависимости от режима
-        switch (currentInputMode)
-        {
-            case InputMode.Keyboard: HandleKeyboardInput(); break;
-            case InputMode.Gamepad: HandleGamepadInput(); break;
-            case InputMode.VirtualJoystick: HandleVirtualJoystickInput(); break;
-            case InputMode.Java: HandleJavaInput(); break;
-            case InputMode.Neurointerface: HandleNeuroInput(); break;
+            Keyboard,
+            Gamepad,
+            VirtualJoystick,
+            Java,
+            Neurointerface,
         }
 
-        // Применяем инверсию если нужно
-        if (invertPitch) pitch = -pitch;
-        if (invertRoll) roll = -roll;
-        if (invertYaw) yaw = -yaw;
-
-        // Сглаживание ввода
-        smoothThrust = Mathf.Lerp(smoothThrust, thrust, Time.deltaTime / inputSmoothing);
-        smoothPitch = Mathf.Lerp(smoothPitch, pitch, Time.deltaTime / inputSmoothing);
-        smoothRoll = Mathf.Lerp(smoothRoll, roll, Time.deltaTime / inputSmoothing);
-        smoothYaw = Mathf.Lerp(smoothYaw, yaw, Time.deltaTime / inputSmoothing);
-
-        // Передаем команды в полетный контроллер
-        if (flightController != null)
+        public List<string> GetInputModes()
         {
-            flightController.SetControlInputs(
-                smoothThrust * inputSensitivity,
-                smoothPitch * inputSensitivity,
-                smoothRoll * inputSensitivity,
-                smoothYaw * inputSensitivity
-            );
-        }
-    }
-
-    void HandleModeToggle()
-    {
-        // Обработка специальных клавиш
-        if (Input.GetKeyDown(calibrateKey) && flightController != null)
-        {
-            flightController.StartCalibration();
+            var modes = Enum.GetNames(typeof(InputMode)).ToList();
+            return modes;
         }
 
-        if (Input.GetKeyDown(toggleStabilizationKey) && flightController != null)
+        public void SetInputMode(int value)
         {
-            flightController.ToggleStabilization();
+            currentInputMode = (InputMode)value;
         }
 
-        // Переключение между режимами
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            currentInputMode = InputMode.Keyboard;
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            currentInputMode = InputMode.Gamepad;
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            currentInputMode = InputMode.VirtualJoystick;
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            currentInputMode = InputMode.Java;
-    }
 
-    void HandleKeyboardInput()
-    {
-        // Тяга
-        thrust = 0f;
-        if (Input.GetKey(thrustUpKey))
-            thrust += 1f;
-        if (Input.GetKey(thrustDownKey))
-            thrust -= 1f;
-
-        // Тангаж (наклон вперед/назад)
-        pitch = 0f;
-        if (Input.GetKey(pitchForwardKey))
-            pitch += 1f;
-        if (Input.GetKey(pitchBackwardKey))
-            pitch -= 1f;
-
-        // Крен (наклон влево/вправо)
-        roll = 0f;
-        if (Input.GetKey(rollLeftKey))
-            roll += 1f;
-        if (Input.GetKey(rollRightKey))
-            roll -= 1f;
-
-        // Рыскание (поворот)
-        yaw = 0f;
-        if (Input.GetKey(yawLeftKey))
-            yaw -= 1f;
-        if (Input.GetKey(yawRightKey))
-            yaw += 1f;
-    }
-
-    void HandleGamepadInput()
-    {
-        if (!useGamepad) return;
-
-        // Получаем ввод с геймпада
-        thrust = Input.GetAxis(thrustAxis);
-        pitch = Input.GetAxis(pitchAxis);
-        roll = Input.GetAxis(rollAxis);
-        yaw = Input.GetAxis(yawAxis);
-    }
-
-    void HandleVirtualJoystickInput()
-    {
-        if (leftJoystick != null)
+        void Start()
         {
-            thrust = leftJoystick.Vertical;
-            yaw = leftJoystick.Horizontal;
-        }
-        else
-        {
-            thrust = 0f;
-            yaw = 0f;
+            if (flightController == null)
+                flightController = GetComponent<FlightController>();
+
+            if (flightController == null)
+            {
+                Debug.LogError("DroneInputManager: FlightController ?? ??????!");
+            }
         }
 
-        if (rightJoystick != null)
+        void Update()
         {
-            pitch = rightJoystick.Vertical;
-            roll = -rightJoystick.Horizontal;
-        }
-        else
-        {
-            pitch = 0f;
-            roll = 0f;
-        }
-    }
+            HandleModeToggle();
 
+            switch (currentInputMode)
+            {
+                case InputMode.Keyboard: HandleKeyboardInput(); break;
+                case InputMode.Gamepad: HandleGamepadInput(); break;
+                case InputMode.VirtualJoystick: HandleVirtualJoystickInput(); break;
+                case InputMode.Java: HandleJavaInput(); break;
+                case InputMode.Neurointerface: HandleNeuroInput(); break;
+            }
 
-    void HandleJavaInput()
-    {
-        if (javaInputReceiver != null)
-        {
-            thrust = javaInputReceiver.thrust;
-            pitch = javaInputReceiver.pitch;
-            roll = javaInputReceiver.roll;
-            yaw = javaInputReceiver.yaw;
-        }
-        else
-        {
-            thrust = pitch = roll = yaw = 0f;
-        }
-    }
+            if (invertPitch) _pitch = -_pitch;
+            if (invertRoll) _roll = -_roll;
+            if (invertYaw) _yaw = -_yaw;
 
-    void HandleNeuroInput()
-    {
-        if (agent != null)
-        {
-            thrust = agent.thrust;
-            pitch = agent.pitch;
-            roll = agent.roll;
-            yaw = agent.yaw;
-        }
-    }
+            _smoothThrust = Mathf.Lerp(_smoothThrust, _thrust, Time.deltaTime / inputSmoothing);
+            _smoothPitch = Mathf.Lerp(_smoothPitch, _pitch, Time.deltaTime / inputSmoothing);
+            _smoothRoll = Mathf.Lerp(_smoothRoll, _roll, Time.deltaTime / inputSmoothing);
+            _smoothYaw = Mathf.Lerp(_smoothYaw, _yaw, Time.deltaTime / inputSmoothing);
 
-    /// <summary>
-    /// Устанавливает режим ввода программно
-    /// </summary>
-    public void SetInputMode(InputMode mode)
-    {
-        currentInputMode = mode;
-        Debug.Log($"Режим ввода изменен на: {mode}");
-    }
-
-    /// <summary>
-    /// Получает текущие значения ввода (для отладки)
-    /// </summary>
-    public Vector4 GetCurrentInput()
-    {
-        return new Vector4(smoothThrust, smoothPitch, smoothRoll, smoothYaw);
-    }
-
-    /// <summary>
-    /// Принудительно устанавливает значения ввода
-    /// </summary>
-    public void SetManualInput(float thrustValue, float pitchValue, float rollValue, float yawValue)
-    {
-        thrust = Mathf.Clamp(thrustValue, -1f, 1f);
-        pitch = Mathf.Clamp(pitchValue, -1f, 1f);
-        roll = Mathf.Clamp(rollValue, -1f, 1f);
-        yaw = Mathf.Clamp(yawValue, -1f, 1f);
-    }
-
-    void OnGUI()
-    {
-        return;
-        // Отображение информации о текущем режиме
-        GUILayout.BeginArea(new Rect(10, 10, 300, 200));
-        GUILayout.Label($"Режим ввода: {currentInputMode}");
-        GUILayout.Label($"Тяга: {smoothThrust:F2}");
-        GUILayout.Label($"Тангаж: {smoothPitch:F2}");
-        GUILayout.Label($"Крен: {smoothRoll:F2}");
-        GUILayout.Label($"Рыскание: {smoothYaw:F2}");
-
-        if (flightController != null)
-        {
-            GUILayout.Label($"Стабилизация: {(flightController.IsStabilizationEnabled() ? "ВКЛ" : "ВЫКЛ")}");
-            GUILayout.Label($"Калибровка: {(flightController.IsCalibrated() ? "Готов" : "Не готов")}");
+            if (flightController != null)
+            {
+                flightController.SetControlInputs(
+                    _smoothThrust * inputSensitivity,
+                    _smoothPitch * inputSensitivity,
+                    _smoothRoll * inputSensitivity,
+                    _smoothYaw * inputSensitivity
+                );
+            }
         }
 
-        GUILayout.Label("Клавиши: 1-4 (режимы), C (калибровка), T (стабилизация)");
-        GUILayout.EndArea();
+        void HandleModeToggle()
+        {
+            if (Input.GetKeyDown(calibrateKey) && flightController != null)
+            {
+                flightController.StartCalibration();
+            }
+
+            if (Input.GetKeyDown(toggleStabilizationKey) && flightController != null)
+            {
+                flightController.ToggleStabilization();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+                currentInputMode = InputMode.Keyboard;
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+                currentInputMode = InputMode.Gamepad;
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+                currentInputMode = InputMode.VirtualJoystick;
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+                currentInputMode = InputMode.Java;
+        }
+
+        void HandleKeyboardInput()
+        {
+            _thrust = 0f;
+            if (Input.GetKey(thrustUpKey))
+                _thrust += 1f;
+            if (Input.GetKey(thrustDownKey))
+                _thrust -= 1f;
+
+            _pitch = 0f;
+            if (Input.GetKey(pitchForwardKey))
+                _pitch += 1f;
+            if (Input.GetKey(pitchBackwardKey))
+                _pitch -= 1f;
+
+            _roll = 0f;
+            if (Input.GetKey(rollLeftKey))
+                _roll += 1f;
+            if (Input.GetKey(rollRightKey))
+                _roll -= 1f;
+
+            _yaw = 0f;
+            if (Input.GetKey(yawLeftKey))
+                _yaw -= 1f;
+            if (Input.GetKey(yawRightKey))
+                _yaw += 1f;
+        }
+
+        void HandleGamepadInput()
+        {
+            if (!useGamepad) return;
+
+            _thrust = Input.GetAxis(thrustAxis);
+            _pitch = Input.GetAxis(pitchAxis);
+            _roll = Input.GetAxis(rollAxis);
+            _yaw = Input.GetAxis(yawAxis);
+        }
+
+        void HandleVirtualJoystickInput()
+        {
+            if (leftJoystick != null)
+            {
+                _thrust = leftJoystick.Vertical;
+                _yaw = leftJoystick.Horizontal;
+            }
+            else
+            {
+                _thrust = 0f;
+                _yaw = 0f;
+            }
+
+            if (rightJoystick != null)
+            {
+                _pitch = rightJoystick.Vertical;
+                _roll = -rightJoystick.Horizontal;
+            }
+            else
+            {
+                _pitch = 0f;
+                _roll = 0f;
+            }
+        }
+
+
+        void HandleJavaInput()
+        {
+            if (javaInputReceiver != null)
+            {
+                _thrust = javaInputReceiver.thrust;
+                _pitch = javaInputReceiver.pitch;
+                _roll = javaInputReceiver.roll;
+                _yaw = javaInputReceiver.yaw;
+            }
+            else
+            {
+                _thrust = _pitch = _roll = _yaw = 0f;
+            }
+        }
+
+        void HandleNeuroInput()
+        {
+            if (agent != null)
+            {
+                _thrust = agent.thrust;
+                _pitch = agent.pitch;
+                _roll = agent.roll;
+                _yaw = agent.yaw;
+            }
+        }
+
+        public void SetInputMode(InputMode mode)
+        {
+            currentInputMode = mode;
+            Debug.Log($"????? ????? ??????? ??: {mode}");
+        }
+
+        public Vector4 GetCurrentInput()
+        {
+            return new Vector4(_smoothThrust, _smoothPitch, _smoothRoll, _smoothYaw);
+        }
+
+        public void SetManualInput(float thrustValue, float pitchValue, float rollValue, float yawValue)
+        {
+            _thrust = Mathf.Clamp(thrustValue, -1f, 1f);
+            _pitch = Mathf.Clamp(pitchValue, -1f, 1f);
+            _roll = Mathf.Clamp(rollValue, -1f, 1f);
+            _yaw = Mathf.Clamp(yawValue, -1f, 1f);
+        }
+
+        void OnGUI()
+        {
+            return;
+            GUILayout.BeginArea(new Rect(10, 10, 300, 200));
+            GUILayout.Label($"????? ?????: {currentInputMode}");
+            GUILayout.Label($"????: {_smoothThrust:F2}");
+            GUILayout.Label($"??????: {_smoothPitch:F2}");
+            GUILayout.Label($"????: {_smoothRoll:F2}");
+            GUILayout.Label($"????????: {_smoothYaw:F2}");
+
+            if (flightController != null)
+            {
+                GUILayout.Label($"????????????: {(flightController.IsStabilizationEnabled() ? "???" : "????")}");
+                GUILayout.Label($"??????????: {(flightController.IsCalibrated() ? "?????" : "?? ?????")}");
+            }
+
+            GUILayout.Label("???????: 1-4 (??????), C (??????????), T (????????????)");
+            GUILayout.EndArea();
+        }
     }
 }

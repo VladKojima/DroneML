@@ -35,9 +35,9 @@ public class DroneAgent : Agent
         var rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         transform.SetPositionAndRotation(pos, Quaternion.Euler(0, 0, 0));
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        // 4. Ждем чтобы моторы "остановились"
+        // 4. пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
         yield return new WaitForSeconds(0.2f);
         rb.isKinematic = false;
     }
